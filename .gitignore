@@ -1,0 +1,29 @@
+# ── Secrets — NEVER commit these ──────────────────────────────────────────
+.env
+.env.local
+.env.production
+.env*.local
+
+# ── Node ───────────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Local photo uploads (now on Cloudinary) ────────────────────────────────
+backend/uploads/
+
+# ── Next.js build output ───────────────────────────────────────────────────
+frontend/.next/
+frontend/out/
+
+# ── OS & editor ────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
+
+# ── Local dev scripts (not needed in cloud) ────────────────────────────────
+*.bat
+*.ps1
+docker-compose.yml
