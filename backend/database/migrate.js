@@ -60,7 +60,7 @@ async function migrate() {
     process.exit(1);
   }
 
-  const migrationsDir = path.join(__dirname, '../../database/migrations');
+  const migrationsDir = path.join(__dirname, 'migrations');
   const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith('.sql')).sort();
 
   for (const file of files) {
