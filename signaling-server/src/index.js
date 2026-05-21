@@ -167,7 +167,7 @@ io.on('connection', (socket) => {
 });
 
 // ─── Start ────────────────────────────────────────────────────────────────────
-const PORT = process.env.SIGNALING_PORT || 5001;
+const PORT = process.env.PORT || process.env.SIGNALING_PORT || 5001;
 server.listen(PORT, () => {
   console.log(`🎥 Signaling server running on port ${PORT}`);
 });
