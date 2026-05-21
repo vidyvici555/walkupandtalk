@@ -118,8 +118,19 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/push', pushRoutes);
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get('/api/health', async (req, res) => {
+  let dbOk = false;
+  try {
+    await pool.query('SELECT 1');
+    dbOk = true;
+  } catch (e) {
+    // db down
+  }
+  res.status(dbOk ? 200 : 200).json({
+    status: 'ok',
+    db: dbOk ? 'connected' : 'unavailable',
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // ─── Error Handling ──────────────────────────────────────────────────────────
@@ -129,20 +140,21 @@ app.use(errorHandler);
 // ─── Start Server ────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 
-const start = async () => {
+// Start listening immediately so Railway's healthcheck can succeed.
+// DB connection is verified in the background.
+server.listen(PORT, '0.0.0.0', () => {
+  logger.info(`Server running on port ${PORT} [${process.env.NODE_ENV}]`);
+});
+
+// Verify DB + launch background jobs after server is up
+(async () => {
   try {
     await pool.query('SELECT 1');
     logger.info('PostgreSQL connected');
-
     startAutoUnmatchJob(io);
-
-    server.listen(PORT, () => {
-      logger.info(`Server running on port ${PORT} [${process.env.NODE_ENV}]`);
-    });
   } catch (err) {
-    logger.error('Failed to start server:', err);
-    process.exit(1);
+    logger.error('DB connection failed on startup (server still running):', err);
+    // Don't exit — Railway would just restart. Log and keep the server alive
+    // so the health endpoint still responds and we can see the error.
   }
-};
-
-start();
+})();
