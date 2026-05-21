@@ -104,7 +104,9 @@ async function migrate() {
   console.log('\n✅ All migrations complete.\n');
 }
 
-migrate().catch(err => {
+migrate().then(() => {
+  process.exit(0);
+}).catch(err => {
   console.error('Unexpected error:', err);
   process.exit(1);
 });
