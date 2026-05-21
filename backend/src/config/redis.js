@@ -63,4 +63,19 @@ const get = async (key) => {
   } catch { return null; }
 };
 
-const del = 
+const del = async (key) => {
+  if (!redisAvailable) return null;
+  try { return await redis.del(key); } catch { return null; }
+};
+
+const incrBy = async (key, amount) => {
+  if (!redisAvailable) return null;
+  try { return await redis.incrby(key, amount); } catch { return null; }
+};
+
+const expire = async (key, seconds) => {
+  if (!redisAvailable) return null;
+  try { return await redis.expire(key, seconds); } catch { return null; }
+};
+
+module.exports = { redis, setEx, get, del, incrBy, expire };

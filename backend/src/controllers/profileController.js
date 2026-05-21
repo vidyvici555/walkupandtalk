@@ -179,4 +179,10 @@ const setPrimaryPhoto = async (req, res, next) => {
   }
 };
 
-module.exp
+module.exports = {
+  getProfile,
+  updateProfile,
+  uploadPhotos,
+  deletePhoto: deletePhotoHandler,
+  setPrimaryPhoto,
+};

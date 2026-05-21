@@ -339,3 +339,5 @@ export default function ChatPage() {
         onToggleCamera={webrtc.toggleCamera}
       />
     </div>
+  );
+}
