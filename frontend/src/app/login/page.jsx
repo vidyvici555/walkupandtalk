@@ -52,9 +52,9 @@ export default function AuthPage() {
       router.push('/swipe');
     } catch (err) {
       if (!err.response) {
-        // No response at all = backend not reachable
+        // No response at all = network / CORS error
         setBackendDown(true);
-        toast.error('Cannot reach the server. Make sure the backend is running on port 5000.');
+        toast.error('Cannot reach the server. Please try again in a moment.');
       } else {
         toast.error(err.response?.data?.error || 'Incorrect email or password.');
       }
@@ -79,7 +79,7 @@ export default function AuthPage() {
     } catch (err) {
       if (!err.response) {
         setBackendDown(true);
-        toast.error('Cannot reach the server. Make sure the backend is running on port 5000.');
+        toast.error('Cannot reach the server. Please try again in a moment.');
       } else {
         toast.error(err.response?.data?.error || 'Sign up failed — that email may already be registered.');
       }
@@ -107,9 +107,9 @@ export default function AuthPage() {
       {/* Backend-down warning banner */}
       {backendDown && (
         <div className="w-full max-w-sm mb-4 bg-red-50 border border-red-200 rounded-2xl px-4 py-3 text-sm text-red-700">
-          <strong>⚠️ Backend not reachable</strong>
+          <strong>⚠️ Service temporarily unavailable</strong>
           <p className="mt-1 text-red-600 text-xs">
-            Run <code className="bg-red-100 px-1 rounded">_run-backend.bat</code> and wait for "Server running on port 5000", then try again.
+            We're having trouble connecting to our servers. Please wait a moment and try again.
           </p>
         </div>
       )}
@@ -198,3 +198,4 @@ export default function AuthPage() {
     </div>
   );
 }
+                                                                       

@@ -26,10 +26,19 @@ const pushRoutes = require('./routes/push');
 const app = express();
 const server = http.createServer(app);
 
+// ─── Allowed origins (CORS) ──────────────────────────────────────────────────
+const getAllowedOrigin = (origin) => {
+  if (!origin) return true; // same-origin / curl / server-to-server
+  if (origin.startsWith('http://localhost')) return true;
+  if (origin.endsWith('.vercel.app')) return true;
+  if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) return true;
+  return false;
+};
+
 // ─── Socket.io ──────────────────────────────────────────────────────────────
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: getAllowedOrigin,
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -84,7 +93,7 @@ io.on('connection', (socket) => {
 // ─── Middleware ──────────────────────────────────────────────────────────────
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: getAllowedOrigin,
   credentials: true,
 }));
 app.use(compression());
@@ -146,15 +155,4 @@ server.listen(PORT, '0.0.0.0', () => {
   logger.info(`Server running on port ${PORT} [${process.env.NODE_ENV}]`);
 });
 
-// Verify DB + launch background jobs after server is up
-(async () => {
-  try {
-    await pool.query('SELECT 1');
-    logger.info('PostgreSQL connected');
-    startAutoUnmatchJob(io);
-  } catch (err) {
-    logger.error('DB connection failed on startup (server still running):', err);
-    // Don't exit — Railway would just restart. Log and keep the server alive
-    // so the health endpoint still responds and we can see the error.
-  }
-})();
+// Veri
