@@ -31,6 +31,8 @@ const getAllowedOrigin = (origin) => {
   if (!origin) return true; // same-origin / curl / server-to-server
   if (origin.startsWith('http://localhost')) return true;
   if (origin.endsWith('.vercel.app')) return true;
+  if (origin === 'https://walkupandtalk.com') return true;
+  if (origin === 'https://www.walkupandtalk.com') return true;
   if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) return true;
   return false;
 };
@@ -151,8 +153,4 @@ const PORT = process.env.PORT || 5000;
 
 // Start listening immediately so Railway's healthcheck can succeed.
 // DB connection is verified in the background.
-server.listen(PORT, '0.0.0.0', () => {
-  logger.info(`Server running on port ${PORT} [${process.env.NODE_ENV}]`);
-});
-
-// Veri
+serv
