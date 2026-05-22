@@ -92,6 +92,9 @@ io.on('connection', (socket) => {
   });
 });
 
+// ─── Railway healthcheck (before all middleware so it always responds) ────────
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+
 // ─── Middleware ──────────────────────────────────────────────────────────────
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors({
@@ -164,8 +167,4 @@ server.listen(PORT, '0.0.0.0', () => {
     logger.info('PostgreSQL connected');
     startAutoUnmatchJob(io);
   } catch (err) {
-    logger.error('DB connection failed on startup (server still running):', err);
-    // Don't exit — Railway would just restart. Log and keep the server alive
-    // so the health endpoint still responds and we can see the error.
-  }
-})();
+    logger.error('DB connection failed on startup (server still
