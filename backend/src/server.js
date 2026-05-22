@@ -153,4 +153,19 @@ const PORT = process.env.PORT || 5000;
 
 // Start listening immediately so Railway's healthcheck can succeed.
 // DB connection is verified in the background.
-serv
+server.listen(PORT, '0.0.0.0', () => {
+  logger.info(`Server running on port ${PORT} [${process.env.NODE_ENV}]`);
+});
+
+// Verify DB + launch background jobs after server is up
+(async () => {
+  try {
+    await pool.query('SELECT 1');
+    logger.info('PostgreSQL connected');
+    startAutoUnmatchJob(io);
+  } catch (err) {
+    logger.error('DB connection failed on startup (server still running):', err);
+    // Don't exit — Railway would just restart. Log and keep the server alive
+    // so the health endpoint still responds and we can see the error.
+  }
+})();
